@@ -17,7 +17,7 @@ public class HiloConParametros extends Thread {
 	public void run() {
 		this.setName(nombreHilo);
 		for (int i = 1; i <= this.veces; i++) {
-			System.out.println("El hilo " + getName() + " se ha ejecutado " + i + " veces.");
+			System.out.println("El hilo " + getName() + " en la iteración " + i);
 		}
 	}
 }
