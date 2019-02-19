@@ -87,11 +87,13 @@ public class ClienteChat extends JFrame implements ActionListener, Runnable {
 	// acción cuando pulsamos botones
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String fechaYHora = String.valueOf(LocalDateTime.now().getHour()) + ":" + String.valueOf(LocalDateTime.now().getMinute());
+		//Declaramos una variable para guardar la hora y los minutos (arreglando que sólo muestre 1 número si los minutos son de 01 a 09)
+		String fechaYHora = String.valueOf(LocalDateTime.now().getHour()) + ":" + String.format("%02d", LocalDateTime.now().getMinute());
 
 		if (e.getSource() == botonEnviar) { // SE PULSA ENVIAR
 			if (mensaje.getText().trim().length() == 0)
 				return;
+			//Se guarda la hora, el nombre y el mensaje
 			String texto = fechaYHora + " " + nombre + "> " + mensaje.getText();
 
 			try {
@@ -101,16 +103,22 @@ public class ClienteChat extends JFrame implements ActionListener, Runnable {
 				e1.printStackTrace();
 			}
 		}
-		if (e.getSource() == botonSalir) { // SE PULSA BOTON SALIR
-			String texto = " > Abandona el Chat ... " + nombre;
-			
-			try {
-				fsalida.writeUTF(texto);
-				fsalida.writeUTF("*");
-				repetir = false; //para salir del bucle
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		if (e.getSource() == botonSalir) {
+			//Implementación botón confirmación para salir o no del chat
+			int dialogButton = JOptionPane.YES_NO_OPTION;// SE PULSA BOTON SALIR
+			int dialogResult = JOptionPane.showConfirmDialog(this, "¿Desea salir del chat?", "Confirmar cierre", dialogButton);
+
+			if (dialogResult == 0) {
+				String texto = " > Abandona el Chat ... " + nombre;
+				
+				try {
+					fsalida.writeUTF(texto);
+					fsalida.writeUTF("*");
+					repetir = false; //para salir del bucle
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else { }
 		}
 	} // FIN acción de los botones
 	
@@ -143,9 +151,18 @@ public class ClienteChat extends JFrame implements ActionListener, Runnable {
 		
 		//Añadido variable IP que pide la IP a conectarse en vez de tener una IP fija
 		String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick: ");
-		//String ipServidor = JOptionPane.showInputDialog("Introduce la IP del servidor: ");
+		String ipServidor = JOptionPane.showInputDialog("Introduce la IP del servidor: ");
+		/*String ipFila1 = "192.168.26.127";
+		String ipFila2 = "192.168.26.127";
+		String ipFila3 = "192.168.26.149";*/
+		
 		if (nombre.trim().length() == 0) {
 			System.out.println("El nombre está vacío...");
+			return;
+		}
+		
+		if (nombre.equals("admin") || nombre.equals("administrador")) {
+			System.out.println("El usuario admin/administrador ya existe.");
 			return;
 		}
 		
